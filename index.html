@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节日祝福生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #2a2a2a;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 1000px;
+            width: 100%;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .left-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .right-section {
+            flex: 1;
+            min-width: 300px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #333;
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        select:hover, input:hover {
+            border-color: #555;
+        }
+
+        select::placeholder, input::placeholder {
+            color: #777;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .result {
+            background: #333;
+            border-radius: 15px;
+            padding: 25px;
+            display: none;
+            min-height: 300px;
+            flex: 1;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .result.show {
+            display: flex;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .right-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 400px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes loadingBar {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(350%);
+            }
+        }
+
+        .result.show {
+            display: flex;
+        }
+
+        .blessing-text {
+            color: #fff;
+            line-height: 1.8;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-section,
+            .right-section {
+                width: 100%;
+            }
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            background: #28a745;
+        }
+
+        .copy-btn:hover {
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .emoji {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            select, input, .btn {
+                font-size: 15px;
+            }
+
+            .blessing-text {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <h1>🎊 节日祝福生成器</h1>
+            
+            <div class="form-group">
+                <label for="holiday">选择节日</label>
+                <select id="holiday">
+                    <option value="newyear">🧧 新年/春节</option>
+                    <option value="midautumn">🥮 中秋节</option>
+                    <option value="christmas">🎄 圣诞节</option>
+                    <option value="birthday">🎂 生日</option>
+                    <option value="valentine">💕 情人节</option>
+                    <option value="mother">👩 母亲节</option>
+                    <option value="father">👨 父亲节</option>
+                    <option value="teacher">📚 教师节</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="name">收件人姓名（可选）</label>
+                <input type="text" id="name" placeholder="请输入收件人姓名">
+            </div>
+
+            <div class="form-group">
+                <label for="length">祝福语字数</label>
+                <select id="length">
+                    <option value="short">简短（1-2句）</option>
+                    <option value="medium">中等（3-4句）</option>
+                    <option value="long">较长（5-6句）</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="btn" style="flex: 1;" onclick="generateBlessing()">生成祝福语 ✨</button>
+                <button class="btn" style="flex: 0 0 120px; background: #6c757d;" onclick="clearBlessing()">清除 🗑️</button>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="result" id="result">
+                <div class="emoji" id="emoji"></div>
+                <div class="blessing-text" id="blessingText"></div>
+                <button class="btn copy-btn" onclick="copyBlessing()">复制祝福语 📋</button>
+            </div>
+            <div class="loading" id="loading" style="display: none; background: #333; border-radius: 15px; padding: 25px; min-height: 300px; flex-direction: column; justify-content: center; align-items: center; text-align: center; animation: fadeIn 0.3s ease-in;">
+                <div style="font-size: 60px; margin-bottom: 20px; animation: pulse 1.5s infinite;">✨</div>
+                <div style="color: #667eea; font-size: 18px; margin-bottom: 10px;">生成中...</div>
+                <div style="color: #999; font-size: 14px; margin-bottom: 20px;">正在为您创作专属祝福语</div>
+                <div style="width: 80px; height: 3px; background: #444; border-radius: 2px; overflow: hidden;">
+                    <div style="width: 30%; height: 100%; background: #667eea; border-radius: 2px; animation: loadingBar 1.5s infinite ease-in-out;"></div>
+                </div>
+            </div>
+            <div class="placeholder" id="placeholder" style="background: #333; border-radius: 15px; padding: 25px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 60px; margin-bottom: 20px;">✨</div>
+                <div style="color: #ccc; font-size: 18px; margin-bottom: 10px;">准备就绪</div>
+                <div style="color: #999; font-size: 14px;">请在左侧填写信息并生成祝福语</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const blessings = {
+            newyear: {
+                emoji: '🧧🎊🎆',
+                texts: [
+                    '新的一年，愿你事事顺心，万事如意，幸福安康！',
+                    '新春佳节，祝你新年快乐，阖家幸福，财源广进！',
+                    '愿新年的钟声带给你平安、快乐、幸福和好运！',
+                    '新年新气象，祝你在新的一年里事业蒸蒸日上，生活甜甜蜜蜜！',
+                    '春节到，祝福到，愿你在新的一年里开心每一天，快乐每一刻！',
+                    '金猪贺岁，吉祥如意，祝你新年快乐，万事大吉！',
+                    '新年的钟声敲响，愿你所有的梦想都能实现，所有的期待都能出现！',
+                    '春节快乐！愿你在新的一年里，健康相伴，幸福相随，好运连连！'
+                ]
+            },
+            midautumn: {
+                emoji: '🥮🌕🏮',
+                texts: [
+                    '中秋佳节，月圆人团圆，祝你阖家幸福，万事如意！',
+                    '明月几时有，把酒问青天，愿你中秋快乐，幸福美满！',
+                    '月圆人圆事事圆，祝你中秋节快乐，阖家团圆！',
+                    '中秋佳节，愿你的生活像月饼一样甜蜜，像月亮一样圆满！',
+                    '花好月圆人团圆，祝你中秋快乐，幸福安康！',
+                    '皓月当空洒清辉，中秋良宵念挚心，祝你节日快乐，万事如意！',
+                    '中秋月圆，思念更浓，愿你阖家幸福，快乐永远！'
+                ]
+            },
+            christmas: {
+                emoji: '🎄🎅🎁',
+                texts: [
+                    '圣诞快乐！愿圣诞的钟声带给你平安和幸福！',
+                    '圣诞节到了，祝你节日快乐，万事如意，心想事成！',
+                    '愿圣诞的喜悦充满你的心间，幸福和快乐永远伴随你！',
+                    '圣诞树上的彩灯，点亮我对你的祝福，祝你圣诞快乐！',
+                    '在这美好的圣诞佳节，愿你拥有所有的幸福和快乐！',
+                    '圣诞快乐！愿你的生活像圣诞礼物一样充满惊喜！',
+                    '雪花飘，圣诞到，祝你节日快乐，幸福美满！'
+                ]
+            },
+            birthday: {
+                emoji: '🎂🎈🎉',
+                texts: [
+                    '生日快乐！愿你的每一天都充满阳光和快乐！',
+                    '在这个特别的日子里，祝你生日快乐，幸福永远！',
+                    '愿你的生日充满欢乐，愿你的生活像蜜糖一样甜蜜！',
+                    '生日快乐！愿你的梦想都能实现，未来更加美好！',
+                    '在你生日这一天，将快乐的音符，作为礼物送给你，愿你拥有365个美丽的日子！',
+                    '生日快乐！愿你在新的一岁里，健康、快乐、幸福！',
+                    '祝你生日快乐，愿你的生活充满欢笑和惊喜！'
+                ]
+            },
+            valentine: {
+                emoji: '💕💖💝',
+                texts: [
+                    '情人节快乐！愿我们的爱情甜蜜如初，幸福永远！',
+                    '亲爱的，情人节快乐！谢谢你一直陪在我身边！',
+                    '愿我们的爱情像巧克力一样甜蜜，像玫瑰一样浪漫！',
+                    '情人节快乐！你是我生命中最美的遇见！',
+                    '爱你在每一个瞬间，情人节快乐，我的爱人！',
+                    '愿我们的爱情永远如初，情人节快乐！',
+                    '亲爱的，有你真好，情人节快乐！'
+                ]
+            },
+            mother: {
+                emoji: '👩👧👦',
+                texts: [
+                    '母亲节快乐！妈妈，您辛苦了，我爱您！',
+                    '妈妈，您是世界上最伟大的人，母亲节快乐！',
+                    '愿妈妈永远年轻美丽，健康快乐，母亲节快乐！',
+                    '妈妈，谢谢您为我付出的一切，母亲节快乐！',
+                    '母亲节到了，愿妈妈幸福安康，永远快乐！',
+                    '妈妈，您的爱是我最珍贵的财富，母亲节快乐！',
+                    '妈妈，您辛苦了，祝您母亲节快乐，永远年轻！'
+                ]
+            },
+            father: {
+                emoji: '👨👧👦',
+                texts: [
+                    '父亲节快乐！爸爸，您辛苦了，我爱您！',
+                    '爸爸，您是我的榜样，父亲节快乐！',
+                    '愿爸爸身体健康，工作顺利，父亲节快乐！',
+                    '爸爸，谢谢您为这个家付出的一切，父亲节快乐！',
+                    '父亲节到了，愿爸爸幸福安康，永远快乐！',
+                    '爸爸，您的爱是我最坚强的后盾，父亲节快乐！',
+                    '爸爸，您辛苦了，祝您父亲节快乐，永远年轻！'
+                ]
+            },
+            teacher: {
+                emoji: '📚👩‍🏫👨‍🏫',
+                texts: [
+                    '教师节快乐！老师，您辛苦了，谢谢您！',
+                    '老师，您是人类灵魂的工程师，教师节快乐！',
+                    '愿老师身体健康，工作顺利，桃李满天下！',
+                    '老师，谢谢您的辛勤教导，教师节快乐！',
+                    '教师节到了，祝您节日快乐，幸福安康！',
+                    '老师，您的教诲我永远铭记，教师节快乐！',
+                    '老师，您辛苦了，祝您教师节快乐，永远年轻！'
+                ]
+            }
+        };
+
+        function generateBlessing() {
+            const holiday = document.getElementById('holiday').value;
+            const name = document.getElementById('name').value.trim();
+            const length = document.getElementById('length').value;
+            const blessingData = blessings[holiday];
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const placeholder = document.getElementById('placeholder');
+            
+            // 立即显示加载动画
+            loading.style.display = 'flex';
+            
+            // 隐藏其他元素
+            result.classList.remove('show');
+            result.style.display = 'none';
+            placeholder.style.display = 'none';
+            
+            // 获取节日名称
+            const holidayNames = {
+                newyear: '新年/春节',
+                midautumn: '中秋节',
+                christmas: '圣诞节',
+                birthday: '生日',
+                valentine: '情人节',
+                mother: '母亲节',
+                father: '父亲节',
+                teacher: '教师节'
+            };
+            
+            const holidayName = holidayNames[holiday];
+            const lengthDesc = {
+                short: '1-2句简短',
+                medium: '3-4句中等长度',
+                long: '5-6句较长'
+            };
+            
+            // 调用大模型API
+            callLLMAPI(holidayName, name, lengthDesc[length]).then(blessingText => {
+                document.getElementById('emoji').textContent = blessingData.emoji;
+                document.getElementById('blessingText').textContent = blessingText;
+                // 立即隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+                // 显示结果
+                document.getElementById('result').style.display = 'flex';
+                document.getElementById('result').classList.add('show');
+            }).catch(() => {
+                // 失败时使用本地祝福语
+                const randomIndex = Math.floor(Math.random() * blessingData.texts.length);
+                let blessingText = blessingData.texts[randomIndex];
+                
+                if (name) {
+                    blessingText = name + '，' + blessingText;
+                }
+                
+                document.getElementById('emoji').textContent = blessingData.emoji;
+                document.getElementById('blessingText').textContent = blessingText;
+                // 立即隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+                // 显示结果
+                document.getElementById('result').style.display = 'flex';
+                document.getElementById('result').classList.add('show');
+            }).finally(() => {
+                // 确保所有情况下都隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+
+        async function callLLMAPI(holiday, name, length) {
+            // 生成提示词
+            let prompt = `请生成一条${length}的${holiday}祝福语`;
+            if (name) {
+                prompt += `，收件人是${name}`;
+            }
+            prompt += '，语言要温暖、真诚，符合节日氛围。';
+            
+            // 调用后端代理接口
+            try {
+                const response = await fetch('http://localhost:3001/api/generate-blessing', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API调用失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                    return data.choices[0].message.content.trim();
+                } else {
+                    throw new Error('API返回格式错误');
+                }
+            } catch (error) {
+                console.error('DeepSeek API调用失败:', error);
+                
+                // 失败时使用备用祝福语
+                const backupResponses = {
+                    '新年/春节': {
+                        short: `${name ? name + '，' : ''}新年快乐！愿你在新的一年里万事如意，心想事成！`,
+                        medium: `${name ? name + '，' : ''}新春佳节到，祝福满天飞！愿你事业蒸蒸日上，生活甜甜蜜蜜，家庭和和美美！`,
+                        long: `${name ? name + '，' : ''}爆竹声声辞旧岁，喜气洋洋迎新春！愿你在新的一年里，事业有成步步高，财源广进滚滚来，家庭美满事事顺，身体健康天天乐！`
+                    },
+                    '中秋节': {
+                        short: `${name ? name + '，' : ''}中秋快乐！愿你月圆人圆事事圆，花好月好人团圆！`,
+                        medium: `${name ? name + '，' : ''}中秋佳节，皓月当空。愿你和家人团聚一堂，共享团圆之乐，共赏明月之美！`,
+                        long: `${name ? name + '，' : ''}又是一年中秋时，皓月当空照九州。愿你事业如日中天，生活花好月圆，家庭幸福团圆，心情满月笑颜！`
+                    },
+                    '圣诞节': {
+                        short: `${name ? name + '，' : ''}圣诞快乐！愿圣诞老人为你带来满满的惊喜和祝福！`,
+                        medium: `${name ? name + '，' : ''}圣诞节到了，愿圣诞树上的彩灯照亮你的前程，圣诞袜里的礼物装满你的惊喜！`,
+                        long: `${name ? name + '，' : ''}在这个充满欢乐的圣诞节，愿你拥有圣诞老人的礼物袋，装满快乐和惊喜；愿你拥有圣诞树的彩灯，照亮前行的道路！`
+                    },
+                    '生日': {
+                        short: `${name ? name + '，' : ''}生日快乐！愿你的每一天都充满阳光和快乐！`,
+                        medium: `${name ? name + '，' : ''}在这个特别的日子里，愿你的生日充满欢乐，愿你的梦想都能实现！`,
+                        long: `${name ? name + '，' : ''}今天是你的生日，愿所有的快乐都围绕着你，所有的幸福都追随着你，所有的好运都陪伴着你！`
+                    },
+                    '情人节': {
+                        short: `${name ? name + '，' : ''}情人节快乐！愿我们的爱情甜蜜如初，幸福永远！`,
+                        medium: `${name ? name + '，' : ''}在这个浪漫的情人节，愿我们的爱情像玫瑰一样绽放，像巧克力一样甜蜜！`,
+                        long: `${name ? name + '，' : ''}情人节到了，愿我们的爱情如星辰般永恒，如花朵般美丽，如蜜糖般甜蜜，直到永远！`
+                    },
+                    '母亲节': {
+                        short: `${name ? name + '，' : ''}母亲节快乐！妈妈，您辛苦了，我爱您！`,
+                        medium: `${name ? name + '，' : ''}妈妈，您是世界上最伟大的人，感谢您为我付出的一切，母亲节快乐！`,
+                        long: `${name ? name + '，' : ''}妈妈，您的爱是我最珍贵的财富，您的付出我永远铭记在心。愿您身体健康，永远年轻，母亲节快乐！`
+                    },
+                    '父亲节': {
+                        short: `${name ? name + '，' : ''}父亲节快乐！爸爸，您辛苦了，我爱您！`,
+                        medium: `${name ? name + '，' : ''}爸爸，您是我的榜样，感谢您为这个家付出的一切，父亲节快乐！`,
+                        long: `${name ? name + '，' : ''}爸爸，您的肩膀是我最坚实的依靠，您的爱是我最温暖的港湾。愿您身体健康，工作顺利，父亲节快乐！`
+                    },
+                    '教师节': {
+                        short: `${name ? name + '，' : ''}教师节快乐！老师，您辛苦了，谢谢您！`,
+                        medium: `${name ? name + '，' : ''}老师，您是人类灵魂的工程师，感谢您的辛勤教导，教师节快乐！`,
+                        long: `${name ? name + '，' : ''}老师，您的教诲如春风化雨，滋润着我的心田。愿您身体健康，工作顺利，桃李满天下，教师节快乐！`
+                    }
+                };
+                
+                const lengthMap = {
+                    '1-2句简短': 'short',
+                    '3-4句中等长度': 'medium',
+                    '5-6句较长': 'long'
+                };
+                
+                const lengthKey = lengthMap[length] || 'medium';
+                
+                if (backupResponses[holiday] && backupResponses[holiday][lengthKey]) {
+                    return backupResponses[holiday][lengthKey];
+                }
+                
+                // 默认祝福语
+                return `${name ? name + '，' : ''}节日快乐！愿你一切顺利，幸福安康！`;
+            }
+        }
+
+        // 实际API调用示例（注释掉的代码）
+        /*
+        async function callRealLLMAPI(prompt) {
+            // 这里是实际的API调用代码
+            // 例如使用OpenAI API
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer YOUR_API_KEY'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        { role: 'system', content: '你是一个祝福语生成专家，擅长创作各种节日的温馨祝福语。' },
+                        { role: 'user', content: prompt }
+                    ],
+                    max_tokens: 100,
+                    temperature: 0.8
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('API调用失败');
+            }
+            
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+        }
+        */
+
+        function copyBlessing() {
+            const blessingText = document.getElementById('blessingText').textContent;
+            navigator.clipboard.writeText(blessingText).then(() => {
+                alert('祝福语已复制到剪贴板！');
+            }).catch(err => {
+                const textarea = document.createElement('textarea');
+                textarea.value = blessingText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('祝福语已复制到剪贴板！');
+            });
+        }
+
+        function clearBlessing() {
+            const result = document.getElementById('result');
+            const placeholder = document.getElementById('placeholder');
+            
+            // 隐藏结果
+            result.classList.remove('show');
+            result.style.display = 'none';
+            
+            // 显示占位符
+            placeholder.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

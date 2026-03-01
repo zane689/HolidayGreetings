@@ -1,0 +1,21 @@
+# 依赖包
+node_modules/
+
+# 环境变量文件（包含API密钥）
+.env
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 旧的backend目录（已迁移到api目录）
+backend/

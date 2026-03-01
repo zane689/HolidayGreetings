@@ -1,0 +1,18 @@
+{
+  "name": "zhufu",
+  "version": "1.0.0",
+  "description": "节日祝福生成器",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  }
+}
