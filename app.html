@@ -572,7 +572,7 @@
             // 调用后端代理接口
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('https://shwujchqdkwedifdpkqh.supabase.co/functions/v1/quick-api', {
+                const response = await fetch('/shwujchqdkwedifdpkqh.supabase.co/functions/v1/quick-api', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
