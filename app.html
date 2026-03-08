@@ -572,7 +572,7 @@
             // 调用后端代理接口
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('/api/quick-api', {
+                const response = await fetch('/api/generate-blessing', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
